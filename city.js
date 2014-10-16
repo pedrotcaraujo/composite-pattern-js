@@ -1,21 +1,27 @@
-var City = function (title, id) {
+var City = function (title, id, className) {
     this.children = [];
-    this.template;
+    this.element = document.createElement('div');
+    var h2 = document.createElement('h2');
+
+    this.element.id = id;
+    if (className) this.element.className = className;
+
+    h2.textContent = title;
+    this.element.appendChild(h2);
+
 }
 
 City.prototype = {
     add: function (child) {
         this.children.push(child);
+        this.element.appendChild(child.getElement());
     },
 
     remove: function (child) {    
         for (var node, i = 0; node = this.getChild(i); i++) {
             if (node == child) {
                 this.children.splice(i, 1);
-                return true;
-            }
-
-            if (node.remove(child)) {
+                this.element.removeChild(child.getElement());
                 return true;
             }
         }
@@ -26,39 +32,26 @@ City.prototype = {
     getChild: function (i) {
         return this.children[i];
     },
-
-    hide: function () {
-        for (var node, i = 0; node = this.getChild(i); i++) {
-            node.hide();
-        }
-         
-        this.element.hide(0);
-    },
-     
-    show: function () {    
-        for (var node, i = 0; node = this.getChild(i); i++) {
-            node.show();
-        }
-    },
      
     getElement: function () {
-        return this.template;
+        return this.element;
     }
 }
 
+var cities = new City('', 'cities');
 var saoPaulo = new City('São Paulo', 'sao-paulo');
 var rioDeJaneiro = new City('Rio de Janeiro', 'rio-de-janeiro');
 var liberdade = new City('Liberdade', 'liberdade');
 var ipiranga = new City('Ipiranga', 'ipiranga');
 var lapa = new City('Lapa', 'lapa');
 var leblon = new City('Leblon', 'leblon');
-var casa1 = new City('Casa 1', 'casa-1');
-var casa2 = new City('Casa 2', 'casa-2');
-var casa3 = new City('Casa 3', 'casa-3');
-var casa4 = new City('Casa 4', 'casa-4');
-var casa5 = new City('Casa 5', 'casa-5');
-var casa6 = new City('Casa 6', 'casa-6');
-var casaRemover7 = new City('Casa remover 7', 'casa-remover-7');
+var casa1 = new City('Casa 1', 'casa-1', 'composite-home');
+var casa2 = new City('Casa 2', 'casa-2', 'composite-home');
+var casa3 = new City('Casa 3', 'casa-3', 'composite-home');
+var casa4 = new City('Casa 4', 'casa-4', 'composite-home');
+var casa5 = new City('Casa 5', 'casa-5', 'composite-home');
+var casa6 = new City('Casa 6', 'casa-6', 'composite-home');
+var casaRemover7 = new City('Casa remover 7', 'casa-remover-7', 'composite-home');
 
 liberdade.add(casa1);
 liberdade.add(casa2);
@@ -66,7 +59,7 @@ liberdade.add(casa2);
 ipiranga.add(casa3);
 ipiranga.add(casaRemover7);
 
-ipiranga.add(casaRemover7); // Removido
+ipiranga.remove(casaRemover7); // Removido
 
 lapa.add(casa4);
 
@@ -78,3 +71,11 @@ saoPaulo.add(ipiranga);
 
 rioDeJaneiro.add(lapa);
 rioDeJaneiro.add(leblon);
+
+cities.add(saoPaulo);
+cities.add(rioDeJaneiro);
+
+document.body.appendChild(cities.getElement());
+
+// CSS Layout Debugger
+[].forEach.call(document.querySelectorAll("*"),function(a){a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)})
